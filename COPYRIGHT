@@ -1,4 +1,4 @@
-salt-repoconf - configuring Linux package repos with saltstack
+salt-repoconf - configure Linux package repos with saltstack
 Copyright (C) 2015  Holger Fischer 
 
 This program is free software; you can redistribute it and/or modify
