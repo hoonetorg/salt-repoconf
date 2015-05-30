@@ -11,7 +11,7 @@ repoconf_profiled__/etc/profile.d/01-proxy.sh:
     - contents: |
         http_proxy="{{proxy}}"
         export http_proxy
-{% if no_proxy is defined and no_proxy != '' %}
+{%- if no_proxy is defined and no_proxy != '' %}
         no_proxy="{{no_proxy}}"
         export no_proxy
 {% endif %}
