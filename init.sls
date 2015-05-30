@@ -4,10 +4,19 @@
     'none': '',
 }, default='none') %}
 
+
 {% if repoconfstate is defined and repoconfstate != "" %}
-include: 
-  - .{{repoconfstate}}
+{% set includes = [ "." + repoconfstate] %}
 {% endif %}
+
+{% set profiled = salt['pillar.get']('repoconf:profiled', {}) %}
+{% if profiled is defined and profiled != {} %}
+{% set includes = includes + [ ".profiled" ] %}
+{% endif %}
+
+{% if includes is defined and includes %}
+include: {{includes}}
+{% endif %} 
 
 # do not create and empty sls 
 # an sls with only include !is! empty for special cases
