@@ -54,7 +54,16 @@ repoconf_yum__cmd_yumrepospkg_finished:
 {% for yumrepofile, yumrepofiledata in salt['pillar.get']('repoconf:yum:yumreposfile', {}).items() %}
 repoconf_yum__file_{{yumrepofile}}:
   file.managed:
-    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__file_/etc/yum.conf_finished' },  { 'cmd' : 'repoconf_yum__cmd_yumrepospkg_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumreposfile_finished' } ] } ] + yumrepofiledata }}
+    - require:
+      - cmd: repoconf_yum__file_/etc/yum.conf_finished
+      - cmd: repoconf_yum__cmd_yumrepospkg_finished
+    - require_in:
+      - cmd: repoconf_yum__cmd_yumreposfile_finished
+    - user: root
+    - group: root
+    - mode: '0644'
+    - name: {{yumrepofiledata.name|default('/etc/yum.repos.d/' + yumrepofile + '.repo')}}
+    - contents: {{yumrepofiledata.contents|yaml}}
 {% endfor %}
 
 repoconf_yum__cmd_yumreposfile_finished:
