@@ -51,3 +51,14 @@ repoconf_yum__cmd_yumrepospkg_finished:
   cmd.run:
     - name: yum clean all
     - unless: yum clean all
+
+{% for yumrepofile, yumrepofiledata in salt['pillar.get']('repoconf:yum:yumreposfile', {}).items() %}
+repoconf_yum__file_{{yumrepofile}}:
+  file.managed:
+    {{ [ { 'require' : [ { 'augeas' : 'repoconf_yum__file_/etc/yum.conf' },  { 'cmd' : 'repoconf_yum__cmd_yumrepospkg_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumreposfile_finished' } ] } ] + yumrepofiledata }}
+{% endfor %}
+
+repoconf_yum__cmd_yumreposfile_finished:
+  cmd.run:
+    - name: yum clean all
+    - unless: yum clean all
