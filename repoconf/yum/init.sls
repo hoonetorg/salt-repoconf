@@ -25,8 +25,8 @@ repoconf_yum__pkg_{{yumrepourl}}:
 
 repoconf_yum__cmd_yumreposurl_finished:
   cmd.run:
-    - name: yum clean all
-    - unless: test "$(ls -1 `yum-config-manager main|grep reposdir|awk '{print $NF}'`/*.repo 2> /dev/null|wc -l)" -gt 0 && yum clean all || true
+    - name: true
+    - unless: yum clean all || true
     
 
 {% for yumrepopkglocal, yumrepopkglocaldata in salt['pillar.get']('repoconf:yum:yumrepospkglocal', {}).items() %}
@@ -37,8 +37,8 @@ repoconf_yum__pkg_{{yumrepopkglocal}}:
 
 repoconf_yum__cmd_yumrepospkglocal_finished:
   cmd.run:
-    - name: yum clean all
-    - unless: test "$(ls -1 `yum-config-manager main|grep reposdir|awk '{print $NF}'`/*.repo 2> /dev/null|wc -l)" -gt 0 && yum clean all || true
+    - name: true
+    - unless: yum clean all || true
 
 {% for yumrepopkg, yumrepopkgdata in salt['pillar.get']('repoconf:yum:yumrepospkg', {}).items() %}
 repoconf_yum__pkg_{{yumrepopkg}}:
@@ -48,8 +48,8 @@ repoconf_yum__pkg_{{yumrepopkg}}:
 
 repoconf_yum__cmd_yumrepospkg_finished:
   cmd.run:
-    - name: yum clean all
-    - unless: test "$(ls -1 `yum-config-manager main|grep reposdir|awk '{print $NF}'`/*.repo 2> /dev/null|wc -l)" -gt 0 && yum clean all || true
+    - name: true
+    - unless: yum clean all || true
 
 {% for yumrepofile, yumrepofiledata in salt['pillar.get']('repoconf:yum:yumreposfile', {}).items() %}
 repoconf_yum__file_{{yumrepofile}}:
@@ -68,5 +68,5 @@ repoconf_yum__file_{{yumrepofile}}:
 
 repoconf_yum__cmd_yumreposfile_finished:
   cmd.run:
-    - name: yum clean all
-    - unless: test "$(ls -1 `yum-config-manager main|grep reposdir|awk '{print $NF}'`/*.repo 2> /dev/null|wc -l)" -gt 0 && yum clean all || true
+    - name: true
+    - unless: yum clean all || true
