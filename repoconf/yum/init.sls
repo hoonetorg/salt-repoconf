@@ -29,6 +29,7 @@ repoconf_yum__file_{{yumrepofile}}:
     - mode: '0644'
     - name: {{yumrepofiledata.name|default('/etc/yum.repos.d/' + yumrepofile + '.repo')}}
     - contents: {{yumrepofiledata.contents|yaml}}
+    - makedirs: True
 {% endfor %}
 
 repoconf_yum__cmd_yumreposfile_finished:
