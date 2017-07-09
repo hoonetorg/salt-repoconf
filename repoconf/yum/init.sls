@@ -17,46 +17,11 @@ repoconf_yum__file_/etc/yum.conf_finished:
     - name: echo "repoconf_yum__file_/etc/yum.conf finished"
     - unless: true
 
-{% for yumrepourl, yumrepourldata in salt['pillar.get']('repoconf:yum:yumreposurl', {}).items() %}
-repoconf_yum__pkg_{{yumrepourl}}:
-  pkg.installed:
-    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__file_/etc/yum.conf_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumreposurl_finished' } ] } ] + yumrepourldata }}
-{% endfor %}
-
-repoconf_yum__cmd_yumreposurl_finished:
-  cmd.run:
-    - name: true
-    - unless: yum clean all || true
-    
-
-{% for yumrepopkglocal, yumrepopkglocaldata in salt['pillar.get']('repoconf:yum:yumrepospkglocal', {}).items() %}
-repoconf_yum__pkg_{{yumrepopkglocal}}:
-  pkg.installed:
-    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__file_/etc/yum.conf_finished' },  { 'cmd' : 'repoconf_yum__cmd_yumreposurl_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumrepospkglocal_finished' } ] } ] + yumrepopkglocaldata }}
-{% endfor %}
-
-repoconf_yum__cmd_yumrepospkglocal_finished:
-  cmd.run:
-    - name: true
-    - unless: yum clean all || true
-
-{% for yumrepopkg, yumrepopkgdata in salt['pillar.get']('repoconf:yum:yumrepospkg', {}).items() %}
-repoconf_yum__pkg_{{yumrepopkg}}:
-  pkg.installed:
-    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__file_/etc/yum.conf_finished' },  { 'cmd' : 'repoconf_yum__cmd_yumrepospkglocal_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumrepospkg_finished' } ] } ] + yumrepopkgdata }}
-{% endfor %}
-
-repoconf_yum__cmd_yumrepospkg_finished:
-  cmd.run:
-    - name: true
-    - unless: yum clean all || true
-
 {% for yumrepofile, yumrepofiledata in salt['pillar.get']('repoconf:yum:yumreposfile', {}).items() %}
 repoconf_yum__file_{{yumrepofile}}:
   file.managed:
     - require:
       - cmd: repoconf_yum__file_/etc/yum.conf_finished
-      - cmd: repoconf_yum__cmd_yumrepospkg_finished
     - require_in:
       - cmd: repoconf_yum__cmd_yumreposfile_finished
     - user: root
@@ -70,3 +35,38 @@ repoconf_yum__cmd_yumreposfile_finished:
   cmd.run:
     - name: true
     - unless: yum clean all || true
+
+{% for yumrepourl, yumrepourldata in salt['pillar.get']('repoconf:yum:yumreposurl', {}).items() %}
+repoconf_yum__pkg_{{yumrepourl}}:
+  pkg.installed:
+    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__cmd_yumreposfile_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumreposurl_finished' } ] } ] + yumrepourldata }}
+{% endfor %}
+
+repoconf_yum__cmd_yumreposurl_finished:
+  cmd.run:
+    - name: true
+    - unless: yum clean all || true
+    
+
+{% for yumrepopkglocal, yumrepopkglocaldata in salt['pillar.get']('repoconf:yum:yumrepospkglocal', {}).items() %}
+repoconf_yum__pkg_{{yumrepopkglocal}}:
+  pkg.installed:
+    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__cmd_yumreposurl_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumrepospkglocal_finished' } ] } ] + yumrepopkglocaldata }}
+{% endfor %}
+
+repoconf_yum__cmd_yumrepospkglocal_finished:
+  cmd.run:
+    - name: true
+    - unless: yum clean all || true
+
+{% for yumrepopkg, yumrepopkgdata in salt['pillar.get']('repoconf:yum:yumrepospkg', {}).items() %}
+repoconf_yum__pkg_{{yumrepopkg}}:
+  pkg.installed:
+    {{ [ { 'require' : [ { 'cmd' : 'repoconf_yum__cmd_yumrepospkglocal_finished' } ] }, { 'require_in' : [ { 'cmd' : 'repoconf_yum__cmd_yumrepospkg_finished' } ] } ] + yumrepopkgdata }}
+{% endfor %}
+
+repoconf_yum__cmd_yumrepospkg_finished:
+  cmd.run:
+    - name: true
+    - unless: yum clean all || true
+
